@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Song Lyrics Image Search</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        input[type="text"] { padding: 10px; width: 80%; max-width: 400px; font-size: 16px; }
+        button { padding: 10px 20px; font-size: 16px; margin-left: 10px; }
+        #lyricsImage { 
+            margin-top: 30px; 
+            max-width: 100%; 
+            height: auto; 
+            display: none; /* Hidden by default */
+            border: 1px solid #ddd;
+        }
+        #message { color: red; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>Search Hosted Lyrics Images</h1>
+    <input type="text" id="searchInput" placeholder="Enter song title (e.g., Bohemian Rhapsody)">
+    <button onclick="searchImage()">Search</button>
+    
+    <p id="message"></p>
+    
+    <img id="lyricsImage" src="" alt="Lyrics Image">
+
+    <script>
+        // --- CONFIGURATION ---
+        const IMAGE_FOLDER = "lyrics/"; 
+        const FILE_EXTENSION = ".jpeg"; // Adjust if you use .png or .jpg
+        // -----------------------
+
+        function searchImage() {
+            const inputElement = document.getElementById('searchInput');
+            const messageElement = document.getElementById('message');
+            const imageElement = document.getElementById('lyricsImage');
+            
+            const query = inputElement.value.trim();
+            
+            // 1. Sanitize the query to match the expected filename format
+            //    This converts "Bohemian Rhapsody" to "Bohemian_Rhapsody"
+            const fileNameBase = query.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+            
+            // 2. Construct the full URL
+            const fullURL = IMAGE_FOLDER + fileNameBase + FILE_EXTENSION;
+            
+            // 3. Attempt to load the image
+            messageElement.textContent = `Searching for: ${fileNameBase}${FILE_EXTENSION}`;
+            
+            imageElement.src = fullURL;
+            
+            // Use JavaScript's built-in image load checking
+            imageElement.onload = function() {
+                // Image successfully loaded
+                imageElement.style.display = 'block';
+                messageElement.textContent = "Image loaded successfully!";
+            };
+
+            imageElement.onerror = function() {
+                // Image failed to load (file not found or wrong extension)
+                imageElement.style.display = 'none';
+                messageElement.textContent = `Error: Lyrics image not found for "${query}". Check filename or extension.`;
+            };
+        }
+    </script>
+
+</body>
+</html>
